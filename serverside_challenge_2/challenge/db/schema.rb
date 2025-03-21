@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_03_20_115727) do
+ActiveRecord::Schema[7.0].define(version: 2025_03_20_231227) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -38,6 +38,18 @@ ActiveRecord::Schema[7.0].define(version: 2025_03_20_115727) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "usage_rates", comment: "従量料金単価", force: :cascade do |t|
+    t.integer "min_kwh", null: false, comment: "最小使用量"
+    t.integer "max_kwh", comment: "最大使用量"
+    t.decimal "unit_price", precision: 10, scale: 2, null: false, comment: "従量料金単価"
+    t.boolean "fix_rate", default: false, null: false, comment: "固定料金フラグ"
+    t.bigint "electricity_plan_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["electricity_plan_id"], name: "index_usage_rates_on_electricity_plan_id"
+  end
+
   add_foreign_key "contract_basic_fees", "electricity_plans"
   add_foreign_key "electricity_plans", "electricity_providers"
+  add_foreign_key "usage_rates", "electricity_plans"
 end
