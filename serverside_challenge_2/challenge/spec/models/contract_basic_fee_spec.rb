@@ -8,6 +8,31 @@ RSpec.describe ContractBasicFee, type: :model do
   let(:basic_fee) { "100.25" }
   let(:electricity_plan) { create(:electricity_plan) }
 
+  describe 'scope' do
+    context '.by_ampere' do
+      subject { described_class.by_ampere(contract_ampere) }
+      let(:contract_ampere) { 10 }
+
+      let(:contract_basic_fee_10_ampere) { create(:contract_basic_fee, contract_ampere:, electricity_plan: electricity_plan) }
+      let(:another_contract_basic_fee_10_ampere) { create(:contract_basic_fee, contract_ampere:, electricity_plan: another_electricity_plan) }
+      let(:another_electricity_plan) { create(:electricity_plan) }
+
+      before do
+        # 対象外のデータ
+        create(:contract_basic_fee, contract_ampere: 15, electricity_plan: electricity_plan)
+        create(:contract_basic_fee, contract_ampere: 20, electricity_plan: electricity_plan)
+        create(:contract_basic_fee, contract_ampere: 30, electricity_plan: electricity_plan)
+      end
+
+      let(:expected_result) { [contract_basic_fee_10_ampere, another_contract_basic_fee_10_ampere] }
+
+      it 'returns contract_basic_fee by contract_ampere' do
+        is_expected.to match_array(expected_result)
+      end
+
+    end
+  end
+
   describe 'validations' do
     subject { contract_basic_fee.valid? }
     
@@ -27,7 +52,6 @@ RSpec.describe ContractBasicFee, type: :model do
           end
         end
       end
-
     end
 
     context 'failure' do

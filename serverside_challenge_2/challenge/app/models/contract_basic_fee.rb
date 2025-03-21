@@ -3,6 +3,8 @@
 class ContractBasicFee < ApplicationRecord
   belongs_to :electricity_plan
 
+  scope :by_ampere, ->(contract_ampere) { where(contract_ampere: contract_ampere) }
+
   validates :contract_ampere, presence: true, uniqueness: { scope: :electricity_plan_id }
   validates :basic_fee, presence: true, numericality: { greater_than_or_equal_to: 0 }
 
