@@ -17,4 +17,9 @@ class ContractBasicFee < ApplicationRecord
     fifty: 50,
     sixty: 60
   }
+
+
+  def self.acceptable_ampere?(ampere)
+    self.contract_amperes.value?(ampere)
+  end
 end

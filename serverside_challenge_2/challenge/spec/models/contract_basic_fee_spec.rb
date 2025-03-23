@@ -118,4 +118,25 @@ RSpec.describe ContractBasicFee, type: :model do
       end
     end
   end
+
+  describe '#acceptable_ampere?' do
+    subject { described_class.acceptable_ampere?(ampere) }
+
+    context 'when ampere is acceptable' do
+      let(:ampere) { 10 }
+
+      it 'returns true' do
+        is_expected.to eq(true)
+      end
+    end
+
+    context 'when ampere is not acceptable' do
+      let(:ampere) { 5 }
+
+      it 'returns false' do
+        is_expected.to eq(false)
+      end
+    end
+
+  end
 end
