@@ -10,6 +10,16 @@ class UsageRate < ApplicationRecord
   validates :unit_price, presence: true
   validate :validate_fix_rate_conditions, if: -> { fix_rate == true }
 
+  def self.find_unit_price(usage_rates: ,consumption:)
+    fixed_rate = usage_rates.find { |rate| rate.fix_rate }
+    
+    if fixed_rate
+      fixed_rate.unit_price
+    else
+      usage_rates.find { |rate| rate.min_kwh <= consumption && rate.max_kwh >= consumption }.unit_price
+    end
+  end
+
   private
 
   def check_min_kwh_nil

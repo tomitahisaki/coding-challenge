@@ -18,6 +18,56 @@ RSpec.describe UsageRate, type: :model do
   let(:fix_rate) { false }
   let(:electricity_plan) { create(:electricity_plan) }
 
+  describe '#find_unit_price' do
+    subject { described_class.find_unit_price(usage_rates: [usage_rate], consumption: consumption) }
+
+    let(:consumption) { 100 }
+    let(:usage_rate) do
+      create(
+        :usage_rate,
+        min_kwh: min_kwh,
+        max_kwh: max_kwh,
+        unit_price: unit_price,
+        fix_rate: fix_rate,
+        electricity_plan: electricity_plan
+      )
+    end
+
+    context 'when fixed_rate is true' do
+      let(:fix_rate) { true }
+      let(:min_kwh) { 0 }
+      let(:max_kwh) { nil }
+      let(:unit_price) { 20.25 }
+
+      it 'returns fixed unit_price' do
+        is_expected.to eq(unit_price)
+      end
+    end
+
+    context 'when fixed_rate is false' do
+      let(:fix_rate) { false }
+      let(:min_kwh) { 0 }
+      let(:max_kwh) { 140 }
+      let(:unit_price) { 15.50 }
+
+      before do
+        # 対象外のデータ
+        create(
+          :usage_rate,
+          min_kwh: 141,
+          max_kwh: 200,
+          unit_price: 25.25,
+          fix_rate: false,
+          electricity_plan: electricity_plan
+        )
+      end
+
+      it 'returns unit_price based on consumption' do
+        is_expected.to eq(unit_price)
+      end
+    end
+  end
+
   describe 'validations' do
     subject { usage_rate.valid? }
 

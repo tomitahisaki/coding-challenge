@@ -23,7 +23,6 @@ RSpec.describe ElectricityPlan, type: :model do
       let(:expected_result) { [electricity_plan, another_electricity_plan] }
 
       it 'returns contract_basic_fee by contract_ampere' do
-        binding.irb
         is_expected.to match_array(expected_result)
       end
     end
@@ -51,6 +50,58 @@ RSpec.describe ElectricityPlan, type: :model do
 
           it 'is invalid' do
             is_expected.to be_invalid
+          end
+        end
+      end
+    end
+  end
+
+  describe '#caluculate_price' do
+    context 'when electricity_plan has contract_basic_fee and usage_rate' do
+      subject { electricity_plan.caluculate_price(ampere:, consumption:) }
+
+      let(:electricity_plan) { create(:electricity_plan) }
+      let!(:contract_ampere) do
+         create(
+          :contract_basic_fee,
+          contract_ampere: ampere,
+          basic_fee:,
+          electricity_plan: electricity_plan
+        )
+      end
+      let!(:usage_rate) do
+        create(
+          :usage_rate,
+          min_kwh:,
+          max_kwh:,
+          unit_price:,
+          fix_rate:,
+          electricity_plan: electricity_plan
+        )
+      end
+      let(:ampere) { 10 }
+      let(:consumption) { 100 }
+
+      context 'when unit_price is not fixed' do
+        let(:min_kwh) { 0 }
+        let(:max_kwh) { 140 }
+        let(:fix_rate) { false }
+
+        context 'when basic_fee and unit_price are integers' do
+          let(:basic_fee) { 100 }
+          let(:unit_price) { 20 }
+
+          it 'returns price' do
+            is_expected.to eq(2100)
+          end
+        end
+        
+        context 'when basic_fee and unit_price are floats' do
+          let(:basic_fee) { 100.25 }
+          let(:unit_price) { 20.25 }
+
+          it 'returns price' do
+            is_expected.to eq(2126) # 2125.25
           end
         end
       end
