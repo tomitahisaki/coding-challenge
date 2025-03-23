@@ -10,8 +10,20 @@ RSpec.describe ElectricityPlan, type: :model do
       let(:contract_ampere) { 10 }
 
       let(:electricity_plan) { create(:electricity_plan) }
-      let!(:contract_basic_fee_10_ampere) { create(:contract_basic_fee, contract_ampere: contract_ampere, electricity_plan: electricity_plan) }
-      let!(:another_contract_basic_fee_10_ampere) { create(:contract_basic_fee, contract_ampere: contract_ampere, electricity_plan: another_electricity_plan) }
+      let!(:contract_basic_fee_10_ampere) do
+         create(
+          :contract_basic_fee,
+          contract_ampere:,
+          electricity_plan:,
+        )
+      end
+      let!(:another_contract_basic_fee_10_ampere) do
+         create(
+          :contract_basic_fee,
+          contract_ampere:,
+          electricity_plan: another_electricity_plan
+        )
+      end
       let(:another_electricity_plan) { create(:electricity_plan) }
 
       before do

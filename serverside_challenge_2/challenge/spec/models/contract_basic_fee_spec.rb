@@ -13,8 +13,20 @@ RSpec.describe ContractBasicFee, type: :model do
       subject { described_class.by_ampere(contract_ampere) }
       let(:contract_ampere) { 10 }
 
-      let(:contract_basic_fee_10_ampere) { create(:contract_basic_fee, contract_ampere:, electricity_plan: electricity_plan) }
-      let(:another_contract_basic_fee_10_ampere) { create(:contract_basic_fee, contract_ampere:, electricity_plan: another_electricity_plan) }
+      let(:contract_basic_fee_10_ampere) do
+        create(
+          :contract_basic_fee,
+          contract_ampere:,
+          electricity_plan:
+        )
+      end
+      let(:another_contract_basic_fee_10_ampere) do
+        create(
+          :contract_basic_fee,
+          contract_ampere:,
+          electricity_plan: another_electricity_plan
+        )
+      end
       let(:another_electricity_plan) { create(:electricity_plan) }
 
       before do
@@ -29,7 +41,6 @@ RSpec.describe ContractBasicFee, type: :model do
       it 'returns contract_basic_fee by contract_ampere' do
         is_expected.to match_array(expected_result)
       end
-
     end
   end
 
@@ -66,7 +77,13 @@ RSpec.describe ContractBasicFee, type: :model do
 
         context 'when contract_ampere is not unique' do
           let(:contract_ampere) { 10 }
-          let!(:existed_contract_basic_fee) { create(:contract_basic_fee, contract_ampere:, electricity_plan: electricity_plan) }
+          let!(:existed_contract_basic_fee) do
+            create(
+              :contract_basic_fee,
+              contract_ampere:,
+              electricity_plan:
+            )
+          end
 
           it 'is invalid' do
             is_expected.to eq(false)
@@ -92,7 +109,7 @@ RSpec.describe ContractBasicFee, type: :model do
         end
 
         context 'when basic_fee is less than 0' do
-          let(:basic_fee) { "-1" }
+          let(:basic_fee) { -1 }
 
           it 'is invalid' do
             is_expected.to eq(false)
