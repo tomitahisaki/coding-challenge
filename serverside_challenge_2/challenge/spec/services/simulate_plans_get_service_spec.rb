@@ -14,7 +14,7 @@ RSpec.describe SimulatePlansGetService, type: :model do
     context 'success' do
       context 'when ampere matches any electricity plans' do
         let(:ampere) { 10 }
-        let(:consumption) { 100 }
+        let(:consumption) { 200 }
         let(:electricity_plan) { create(:electricity_plan) }
         let!(:contract_basic_fee_10_ampere) do
           create(
@@ -24,12 +24,22 @@ RSpec.describe SimulatePlansGetService, type: :model do
             electricity_plan:,
           )
         end
-        let!(:usage_rate) do
+        let!(:first_usage_rate) do
           create(
             :usage_rate,
             min_kwh: 0,
-            max_kwh: 140,
+            max_kwh: 120,
             unit_price: 20.00,
+            fix_rate: false,
+            electricity_plan:,
+          )
+        end
+        let(:second_usage_rate) do
+          create(
+            :usage_rate,
+            min_kwh: 121,
+            max_kwh: 200,
+            unit_price: 25.00,
             fix_rate: false,
             electricity_plan:,
           )
@@ -66,12 +76,12 @@ RSpec.describe SimulatePlansGetService, type: :model do
             {
               provider_name: electricity_plan.electricity_provider.provider_name,
               plan_name: electricity_plan.plan_name,
-              price: 2100.0,
+              price: 2500.0,
             },
             {
               provider_name: another_electricity_plan.electricity_provider.provider_name,
               plan_name: another_electricity_plan.plan_name,
-              price: 4200.0,
+              price: 5800.0,
             },
           ]
         end

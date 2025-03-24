@@ -11,9 +11,9 @@ class ElectricityPlan < ApplicationRecord
 
   def caluculate_price(ampere:, consumption:)
     basic_fee = contract_basic_fees.find { |fee| fee.contract_ampere_before_type_cast == ampere }.basic_fee
-    unit_price = ::UsageRate.find_unit_price(usage_rates:, consumption:)
+    total_usage_price = ::UsageRate.calculate_total_price(usage_rates:, consumption:)
 
-    price = basic_fee.to_f + (unit_price.to_f * consumption)
+    price = basic_fee.to_f + total_usage_price
     price.ceil
   end
 end

@@ -72,50 +72,40 @@ RSpec.describe ElectricityPlan, type: :model do
     context 'when electricity_plan has contract_basic_fee and usage_rate' do
       subject { electricity_plan.caluculate_price(ampere:, consumption:) }
 
+      let(:ampere) { 10 }
+      let(:consumption) { 200 }
       let(:electricity_plan) { create(:electricity_plan) }
       let!(:contract_ampere) do
          create(
           :contract_basic_fee,
           contract_ampere: ampere,
-          basic_fee:,
+          basic_fee: 100.0,
           electricity_plan: electricity_plan
         )
       end
-      let!(:usage_rate) do
+      let!(:first_usage_rate) do
         create(
           :usage_rate,
-          min_kwh:,
-          max_kwh:,
-          unit_price:,
-          fix_rate:,
+          min_kwh: 0,
+          max_kwh: 140,
+          unit_price: 20.25,
+          fix_rate: false,
           electricity_plan: electricity_plan
         )
       end
-      let(:ampere) { 10 }
-      let(:consumption) { 100 }
+      let!(:second_usage_rate) do
+        create(
+          :usage_rate,
+          min_kwh: 141,
+          max_kwh: 200,
+          unit_price: 25.25,
+          fix_rate: false,
+          electricity_plan: electricity_plan
+        )
+      end
 
-      context 'when unit_price is not fixed' do
-        let(:min_kwh) { 0 }
-        let(:max_kwh) { 140 }
-        let(:fix_rate) { false }
-
-        context 'when basic_fee and unit_price are integers' do
-          let(:basic_fee) { 100 }
-          let(:unit_price) { 20 }
-
-          it 'returns price' do
-            is_expected.to eq(2100)
-          end
-        end
-        
-        context 'when basic_fee and unit_price are floats' do
-          let(:basic_fee) { 100.25 }
-          let(:unit_price) { 20.25 }
-
-          it 'returns price' do
-            is_expected.to eq(2126) # 2125.25
-          end
-        end
+      it 'returns total price' do
+        is_expected.to eq(4450.0)
       end
     end
   end

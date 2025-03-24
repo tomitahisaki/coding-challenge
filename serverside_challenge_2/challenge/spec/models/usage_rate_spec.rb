@@ -18,52 +18,64 @@ RSpec.describe UsageRate, type: :model do
   let(:fix_rate) { false }
   let(:electricity_plan) { create(:electricity_plan) }
 
-  describe '#find_unit_price' do
-    subject { described_class.find_unit_price(usage_rates: [usage_rate], consumption: consumption) }
+  describe '#calculate_total_price' do
+    subject { described_class.calculate_total_price(usage_rates:, consumption:) }
 
-    let(:consumption) { 100 }
-    let(:usage_rate) do
-      create(
-        :usage_rate,
-        min_kwh: min_kwh,
-        max_kwh: max_kwh,
-        unit_price: unit_price,
-        fix_rate: fix_rate,
-        electricity_plan: electricity_plan
-      )
-    end
+    let(:consumption) { 300 }
 
     context 'when fixed_rate is true' do
-      let(:fix_rate) { true }
-      let(:min_kwh) { 0 }
-      let(:max_kwh) { nil }
-      let(:unit_price) { 20.25 }
+      let(:usage_rates) { [usage_rate] }
+      let(:usage_rate) do
+        create(
+          :usage_rate,
+          min_kwh: 0,
+          max_kwh: nil,
+          unit_price: 20.25,
+          fix_rate: true,
+          electricity_plan: electricity_plan
+        )
+      end
 
-      it 'returns fixed unit_price' do
-        is_expected.to eq(unit_price)
+      it 'returns total price' do
+        is_expected.to eq(6075.0)
       end
     end
 
     context 'when fixed_rate is false' do
-      let(:fix_rate) { false }
-      let(:min_kwh) { 0 }
-      let(:max_kwh) { 140 }
-      let(:unit_price) { 15.50 }
-
-      before do
-        # 対象外のデータ
+      let(:usage_rates) { [first_usage_rate, second_usage_rate, third_usage_rate] }
+      let(:first_usage_rate) do
         create(
           :usage_rate,
-          min_kwh: 141,
+          min_kwh: 0,
+          max_kwh: 120,
+          unit_price: 20.25,
+          fix_rate: false,
+          electricity_plan: electricity_plan
+        )
+      end
+      let(:second_usage_rate) do
+        create(
+          :usage_rate,
+          min_kwh: 121,
           max_kwh: 200,
           unit_price: 25.25,
           fix_rate: false,
           electricity_plan: electricity_plan
         )
       end
+      let(:third_usage_rate) do
+        create(
+          :usage_rate,
+          min_kwh: 201,
+          max_kwh: nil,
+          unit_price: 30.25,
+          fix_rate: false,
+          electricity_plan: electricity_plan
+        )
+      end
 
-      it 'returns unit_price based on consumption' do
-        is_expected.to eq(unit_price)
+      it 'returns total price' do
+        is_expected.to eq(7475.0)
       end
     end
   end
