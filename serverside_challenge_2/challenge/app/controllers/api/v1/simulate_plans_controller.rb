@@ -2,19 +2,19 @@
 
 class Api::V1::SimulatePlansController < ApplicationController
   def index
-    # service = SimulatePlansService.new(simulate_params).execute
+    service = SimulatePlansGetService.new(simulate_params:)
 
-    expect_response = [
-      { provider_name: '東京ガス', plan_name: 'ガスプラン', price: 1000 },
-      { provider_name: '東京電力', plan_name: '電気プラン', price: 2000 },
-    ]
-
-    render json: expect_response, status: :ok
+    render json: service.execute, status: :ok
+  rescue SimulatePlansGetService::SimulatePlansGetServiceError => e
+    render json: { errors: e.messages }, status: :unprocessable_entity
   end
 
   private
-  
+
   def simulate_params
-    params.permit(:ampere, :consumption)
+    {
+      ampere: params[:ampere].to_i,
+      consumption: params[:consumption].to_i,
+    }
   end
 end

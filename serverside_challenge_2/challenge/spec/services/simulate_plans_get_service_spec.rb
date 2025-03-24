@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe SimulatePlansGetService, type: :model do
-  let(:service) { described_class.new(ampere:, consumption:) }
+  let(:service) { described_class.new(simulate_params:) }
   let(:ampere) { 10 }
   let(:consumption) { 100 }
 

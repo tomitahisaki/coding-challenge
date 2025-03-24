@@ -9,9 +9,9 @@ class SimulatePlansGetService
     end
   end
 
-  def initialize(ampere:, consumption:)
-    @ampere = ampere
-    @consumption = consumption
+  def initialize(simulate_params:)
+    @ampere = simulate_params[:ampere]
+    @consumption = simulate_params[:consumption]
 
     @errors = []
   end
@@ -30,7 +30,7 @@ class SimulatePlansGetService
 
   private
 
-  attr_reader :ampere, :consumption
+  attr_reader :ampere, :consumption, :errors
 
   def electricity_plans
     @electricity_plans ||= 
