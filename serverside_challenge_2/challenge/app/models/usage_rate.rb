@@ -19,7 +19,7 @@ class UsageRate < ApplicationRecord
 
     usage_rates.sort_by(&:min_kwh).each do |usage_rate|
       next if remaining_consumption <= 0
-      
+
       if usage_rate.max_kwh.nil?
         total_price += usage_rate.unit_price.to_f * remaining_consumption
         remaining_consumption = 0
@@ -40,10 +40,10 @@ class UsageRate < ApplicationRecord
 
   def check_min_kwh_nil
     # numercality validation は、nil は許容しないので、ここで nil チェックを行う
-    if min_kwh.nil?
-      errors.add(:min_kwh, :blank)
-      throw(:abort)
-    end
+    return unless min_kwh.nil?
+    
+    errors.add(:min_kwh, :blank)
+    throw(:abort)
   end
 
   def validate_fix_rate_conditions
