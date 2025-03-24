@@ -10,9 +10,9 @@ class UsageRate < ApplicationRecord
   validates :unit_price, presence: true
   validate :validate_fix_rate_conditions, if: -> { fix_rate == true }
 
-  def self.find_unit_price(usage_rates: ,consumption:)
-    fixed_rate = usage_rates.find { |rate| rate.fix_rate }
-    
+  def self.find_unit_price(usage_rates:, consumption:)
+    fixed_rate = usage_rates.find(&:fix_rate)
+
     if fixed_rate
       fixed_rate.unit_price
     else

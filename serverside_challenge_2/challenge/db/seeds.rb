@@ -81,3 +81,13 @@ usage_rates = [
   { min_kwh: 0, max_kwh: nil, unit_price: 28.8, fix_rate: true, plan: 'おうちプラン' },
 ]
 
+usage_rates.each do |usage_rate|
+  UsageRate.find_or_create_by!(
+    min_kwh: usage_rate[:min_kwh],
+    max_kwh: usage_rate[:max_kwh],
+    unit_price: usage_rate[:unit_price],
+    fix_rate: usage_rate[:fix_rate],
+    electricity_plan: ElectricityPlan.find_by(plan_name: usage_rate[:plan])
+  )
+end
+
