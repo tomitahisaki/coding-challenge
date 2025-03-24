@@ -9,6 +9,13 @@ class SimulatePlansGetService
     end
   end
 
+  ERROR_MESSAGES = {
+    ampere_not_integer: '契約アンペア数は数値で入力してください',
+    ampere_not_acceptable: '契約アンペア数は正しい値で入力してください',
+    consumption_not_integer: '使用量は数値で入力してください',
+    consumption_not_positive: '使用量は0以上の整数で入力してください',
+  }
+
   def initialize(simulate_params:)
     @ampere = simulate_params[:ampere]
     @consumption = simulate_params[:consumption]
@@ -45,12 +52,24 @@ class SimulatePlansGetService
   end
 
   def validate_consumption
-    return errors << { consumption: '使用量は数値で入力してください' } unless consumption.is_a?(Integer)
-    return errors << { consumption: '使用量は0以上の整数で入力してください' } unless consumption.positive?
+    unless consumption.is_a?(Integer)
+      add_error(:consumption, ERROR_MESSAGES[:consumption_not_integer])
+      return
+    end
+
+    add_error(:consumption, ERROR_MESSAGES[:consumption_not_positive]) unless consumption.positive?
   end
 
   def validate_ampere
-    return errors << { ampere: '契約アンペア数は数値で入力してください' } unless ampere.is_a?(Integer)
-    return errors << { ampere: '契約アンペア数は正しい値で入力してください' } unless ContractBasicFee.acceptable_ampere?(ampere)
+    unless ampere.is_a?(Integer)
+      add_error(:ampere, ERROR_MESSAGES[:ampere_not_integer])
+      return
+    end
+
+    add_error(:ampere, ERROR_MESSAGES[:ampere_not_acceptable]) unless ContractBasicFee.acceptable_ampere?(ampere)
+  end
+
+  def add_error(key, message)
+    errors << { key => message }
   end
 end
