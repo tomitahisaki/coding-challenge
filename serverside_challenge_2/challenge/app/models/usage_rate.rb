@@ -41,7 +41,7 @@ class UsageRate < ApplicationRecord
   def check_min_kwh_nil
     # numercality validation は、nil は許容しないので、ここで nil チェックを行う
     return unless min_kwh.nil?
-    
+
     errors.add(:min_kwh, :blank)
     throw(:abort)
   end
