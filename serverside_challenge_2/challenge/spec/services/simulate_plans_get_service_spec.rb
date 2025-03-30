@@ -113,9 +113,9 @@ RSpec.describe SimulatePlansGetService, type: :model do
       end
 
       context 'when consumption is not positive' do
-        let(:consumption) { 0 }
+        let(:consumption) { -1 }
 
-        let(:expected_error) { [{consumption: '使用量は0以上の整数で入力してください'}] }
+        let(:expected_error) { [{ consumption: '使用量は0以上の整数で入力してください' }] }
 
         it 'raises error' do
           expect { subject }.to raise_error do |error|

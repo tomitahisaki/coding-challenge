@@ -57,7 +57,7 @@ class SimulatePlansGetService
       return
     end
 
-    add_error(:consumption, ERROR_MESSAGES[:consumption_not_positive]) unless consumption.positive?
+    add_error(:consumption, ERROR_MESSAGES[:consumption_not_positive]) if consumption.negative?
   end
 
   def validate_ampere
